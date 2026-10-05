@@ -5,10 +5,13 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { UsersModule } from '../users/users.module';
 import { JWT_SECRET } from '../configs/jwt-secret';
+import { PassportModule } from '@nestjs/passport';
+import { PassportAuthController } from './passport-auth.controller';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
-  providers: [AuthService],
-  controllers: [AuthController],
+  providers: [AuthService,LocalStrategy,],
+  controllers: [AuthController,PassportAuthController],
   imports: [
     UsersModule,
     JwtModule.register({
@@ -16,6 +19,7 @@ import { JWT_SECRET } from '../configs/jwt-secret';
       secret: JWT_SECRET,
       signOptions: { expiresIn: '15m' },
     }),
+    PassportModule
   ],
 })
 export class AuthModule {}

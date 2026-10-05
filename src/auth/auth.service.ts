@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   async signIn(user: SignInData): Promise<AuthResult> {
-    const tokenPayload = {
+    const tokenPayload = {  //payload/body to be JWT-tokenized
       sub: user.userId,
       username: user.username,
     };

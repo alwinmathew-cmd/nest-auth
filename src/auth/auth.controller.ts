@@ -15,11 +15,11 @@ export class AuthController {
         return this.authService.authenticate(input);
     }
 
-// Restricted endpint, ie login, so guard used here
+// Restricted endpoint, ie login, so guard used here
     @UseGuards(AuthGuard)
     @Get('me')
     getUserInfo(@Request() request: Request & { user: { userid: number; username: string } }) {
-        return request.user;//check AUthGuard class for info
+        return request.user;//check AuthGuard class for info
     }
 
 }
