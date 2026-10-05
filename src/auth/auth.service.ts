@@ -1,6 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service'; //to access .findUserByName() from users.service.ts
+import { JwtService } from '@nestjs/jwt'; //used below
+
+// UnauthorizedException means server doesn't recognize the client, its diff from 401 Forbidden Error.
+// Forbidden mean s recoginzed client but no access privelege for resource
 
 export type AuthInput = { username: string; password: string };
 type SignInData = { userId: number; username: string };
@@ -8,8 +11,9 @@ type AuthResult = { accessToken: string; userId: number; username: string };
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService,
-    private jwtService:JwtService
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
   ) {}
 
   async authenticate(input: AuthInput): Promise<AuthResult> {
@@ -31,12 +35,12 @@ export class AuthService {
     return null;
   }
 
-  async signIn(user:SignInData):Promise<AuthResult>{
+  async signIn(user: SignInData): Promise<AuthResult> {
     const tokenPayload = {
-        sub:user.userId,
-        username:user.username
+      sub: user.userId,
+      username: user.username,
     };
     const accessToken = await this.jwtService.signAsync(tokenPayload);
-    return {accessToken,userId:user.userId,username:user.username};
+    return { accessToken, userId: user.userId, username: user.username };
   }
 }
