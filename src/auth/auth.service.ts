@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException,BadRequestException, } from '@nestjs/common';
 import { UsersService } from '../users/users.service'; //to access .findUserByName() from users.service.ts
 import { JwtService } from '@nestjs/jwt'; //used below
 
@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt'; //used below
 
 export type AuthInput = { username: string; password: string };
 type SignInData = { userId: number; username: string };
-type AuthResult = { accessToken: string; userId: number; username: string };
+type AuthResult = { message:string,accessToken: string; userId: number; username: string };
 
 @Injectable()
 export class AuthService {
@@ -17,10 +17,16 @@ export class AuthService {
   ) {}
 
   async authenticate(input: AuthInput): Promise<AuthResult> {
+    // 1. Missing credentials check -> 400 Bad Request
+    if (!input?.username || !input?.password) {
+      throw new BadRequestException('Email and password are required');
+    }
+
     const user = await this.validateUser(input);
 
+    // 2. Invalid credentials check -> 401 Unauthorized
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     return this.signIn(user);
@@ -36,11 +42,18 @@ export class AuthService {
   }
 
   async signIn(user: SignInData): Promise<AuthResult> {
-    const tokenPayload = {  //payload/body to be JWT-tokenized
+    const tokenPayload = {
       sub: user.userId,
       username: user.username,
     };
     const accessToken = await this.jwtService.signAsync(tokenPayload);
-    return { accessToken, userId: user.userId, username: user.username };
+    
+    // 3. Successful login response -> 200 OK
+    return {
+      message: 'Login successful',
+      accessToken,
+      userId: user.userId,
+      username: user.username,
+    };
   }
 }

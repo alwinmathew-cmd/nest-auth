@@ -8,6 +8,7 @@ import type {AuthInput} from './auth.service';
 export class AuthController {
     constructor(private authService:AuthService){}
 
+  //@HttpCode(200) same effect as below line
     //authentication at login (getting token)
     @HttpCode(HttpStatus.OK)//by def,Post returns 201 CREATE status, with enum HttpStatus.OK, we make it 200 OK, 
     @Post('login')                                       //as fn is authenticating at login, not creating/sending data
