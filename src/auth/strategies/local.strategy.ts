@@ -1,3 +1,5 @@
+// Maybe used when u have in-house authentication rather third party auth.
+
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
